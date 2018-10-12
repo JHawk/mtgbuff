@@ -1,9 +1,17 @@
 import scala.io.Source
 
 object InputParser {
+  val tappedOutLineMatcherWithDisplayInfo = raw"""(\d+x)+ (.+?(?=\()+)+(\(.+\)) (.*)""".r
+  val tappedOutLineMatcherWithExpansion = raw"""(\d+x)+ (.+?(?=\()+)+(\(.+\))""".r
+  val tappedOutLineMatcher = raw"""(\d+x)+ (.+)""".r
+
   def toCard(line: String): Card = {
-    val name = line // parse
-    new Card(name)
+    line match {
+      case tappedOutLineMatcherWithDisplayInfo(_, name, edition, _) => new Card(name, Some(edition))
+      case tappedOutLineMatcherWithExpansion(_, name, edition, _*) => new Card(name, Some(edition))
+      case tappedOutLineMatcher(_, name, _*) => new Card(name)
+      case _ => new Card("missing")
+    }
   }
 
   def parse(path: String): Array[Card] = {
@@ -13,6 +21,4 @@ object InputParser {
     for (card <- cards) println(card)
     cards
   }
-
-  parse("./src/test/data/test-deck1")
 }
