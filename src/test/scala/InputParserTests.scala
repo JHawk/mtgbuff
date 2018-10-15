@@ -33,12 +33,12 @@ class InputParserTests extends FlatSpec {
     assert(card.edition == Some("(ISD)"))
   }
 
-  behavior of "parse"
+  behavior of "parseDeck"
 
-  it should "parse cards from a file" in {
+  it should "parseDeck cards from a file" in {
     val path = "./src/test/data/test-deck1"
-    val cards = InputParser.parse(path)
+    val deck = InputParser.parseDeck(path)
 
-    assert(cards.length == 100)
+    assert(deck.count == 100)
   }
 }

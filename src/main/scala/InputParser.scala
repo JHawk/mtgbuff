@@ -8,21 +8,20 @@ object InputParser {
   val tappedOutLineMatcher = raw"""(\d+)+x (.+)""".r
 
   def toCards(line: String): Seq[Card] = {
-    toCard(line) match {
+    parseLine(line) match {
       case ParsedLine(n, Some(card)) => Seq.fill(n)(card)
       case _ => Seq()
     }
   }
 
-  def parse(path: String): Array[Card] = {
+  def parseDeck(path: String): Deck = {
     val source = Source.fromFile(path)
     val cards = source.getLines.toArray.flatMap(toCards)
     source.close()
-    for (card <- cards) println(card)
-    cards
+    new Deck(cards)
   }
 
-  private def toCard(line: String): ParsedLine = {
+  private def parseLine(line: String): ParsedLine = {
     val toCount = (s: String) => s.toInt
 
     line match {
