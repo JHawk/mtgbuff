@@ -1,6 +1,4 @@
-import scala.io.Source
-
-object InputParser {
+object InputParser extends Usable {
   private case class ParsedLine(count: Int = 0, card: Option[Card] = None)
 
   val tappedOutLineMatcherWithDisplayInfo = raw"""(\d+)+x (.+?(?=\()+)+(\(.+\)) (.*)""".r
@@ -15,9 +13,9 @@ object InputParser {
   }
 
   def parseDeck(path: String): Deck = {
-    val source = Source.fromFile(path)
-    val cards = source.getLines.toArray.flatMap(toCards)
-    source.close()
+    val cards = using(scala.io.Source.fromFile(path)) { source => {
+      source.getLines.toArray.flatMap(toCards)
+    }}
     new Deck(cards)
   }
 
